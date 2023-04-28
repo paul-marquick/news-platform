@@ -17,4 +17,4 @@ RUN dotnet publish "ConsoleApp1.csproj" -c Release -o /app/publish /p:UseAppHost
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "ConsoleApp1.dll"]
+ENTRYPOINT ["dotnet", "NewsPlatform.ConsoleApp1.dll"]
