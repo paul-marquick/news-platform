@@ -4,21 +4,18 @@ using NewsPlatform.WebService.Mappers;
 
 namespace NewsPlatform.WebService;
 
-public class Program
+internal class Program
 {
-    public static void Main(string[] args)
+    private static void Main(string[] args)
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+        builder.Services.AddDbContextPool<NewsPlatformDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("NewsPlatform")));
         builder.Services.AddControllers();
-
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-
-        builder.Services.AddDbContextPool<NewsPlatformDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("NewsPlatform")));
-
         builder.Services.AddSingleton<ICategoryMapper, CategoryMapper>();
+        builder.Services.AddSingleton<IArticleMapper, ArticleMapper>();
 
         WebApplication app = builder.Build();
 
