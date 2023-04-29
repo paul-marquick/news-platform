@@ -20,13 +20,13 @@ public class CategoryController : ControllerBase
     }
 
     [HttpGet]
-    public IEnumerable<Models.Category> Get()
+    public IEnumerable<DTOs.Category> Get()
     {
-        return dbContext.Categories.OrderBy(x => x.Name).Select(categoryMapper.MapEntityToModel);
+        return dbContext.Categories.OrderBy(x => x.Name).Select(categoryMapper.MapEntityToDto);
     }
 
     [HttpGet("{id}")]
-    public async Task<Models.Category?> GetAsync(Guid id)
+    public async Task<DTOs.Category?> GetAsync(Guid id)
     {
         var categoryEntity = await dbContext.Categories.SingleOrDefaultAsync(x => x.Id == id);
 
@@ -38,35 +38,46 @@ public class CategoryController : ControllerBase
         }
         else
         {
-            return categoryMapper.MapEntityToModel(categoryEntity);
+            return categoryMapper.MapEntityToDto(categoryEntity);
         }
     }
 
     [HttpPost]
-    public async Task<Models.Category> PostAsync([FromBody] Models.Category categoryModel)
+    public async Task<DTOs.Category> PostAsync([FromBody] DTOs.Category categoryDto)
     {
-        Category categoryEntity = categoryMapper.MapModelToEntity(categoryModel);
+        Category categoryEntity = new Category
+        {
+            Name = categoryDto.Name
+        };
 
         dbContext.Categories.Add(categoryEntity);
         await dbContext.SaveChangesAsync();
 
-        categoryModel.Id = categoryEntity.Id;
+        categoryDto.Id = categoryEntity.Id;
 
         Response.StatusCode = StatusCodes.Status201Created;
 
-        return categoryModel;
+        return categoryDto;
     }
 
     [HttpPut("{id}")]
-    public async Task PutAsync(Guid id, [FromBody] Models.Category categoryModel)
+    public async Task PutAsync(Guid id, [FromBody] DTOs.Category categoryDto)
     {
-        Category categoryEntity = categoryMapper.MapModelToEntity(categoryModel);
-        categoryEntity.Id = id;
+        var categoryEntity = await dbContext.Categories.SingleOrDefaultAsync(x => x.Id == id);
 
-        dbContext.Categories.Update(categoryEntity);
-        await dbContext.SaveChangesAsync();
+        if (categoryEntity == null)
+        {
+            Response.StatusCode = StatusCodes.Status404NotFound;
+        }
+        else
+        {
+            categoryMapper.UpdateEntityWithDto(categoryEntity, categoryDto);
 
-        Response.StatusCode = StatusCodes.Status204NoContent;
+            dbContext.Categories.Update(categoryEntity);
+            await dbContext.SaveChangesAsync();
+
+            Response.StatusCode = StatusCodes.Status204NoContent;
+        }
     }
 
     [HttpDelete("{id}")]

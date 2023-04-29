@@ -2,6 +2,6 @@
 
 public interface ICategoryMapper
 {
-    Models.Category MapEntityToModel(DataAccess.Entities.Category categoryEntity);
-    DataAccess.Entities.Category MapModelToEntity(Models.Category categoryModel);
+    DTOs.Category MapEntityToDto(DataAccess.Entities.Category categoryEntity);
+    void UpdateEntityWithDto(DataAccess.Entities.Category categoryEntity, DTOs.Category categoryDto);
 }

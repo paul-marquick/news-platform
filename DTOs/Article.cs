@@ -1,4 +1,4 @@
-﻿namespace NewsPlatform.Models;
+﻿namespace NewsPlatform.DTOs;
 
 public record Article
 {

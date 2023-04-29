@@ -2,16 +2,13 @@
 
 public class CategoryMapper : ICategoryMapper
 {
-    public Models.Category MapEntityToModel(DataAccess.Entities.Category categoryEntity)
+    public DTOs.Category MapEntityToDto(DataAccess.Entities.Category categoryEntity)
     {
-        return new Models.Category(categoryEntity.Id, categoryEntity.Name);
+        return new DTOs.Category(categoryEntity.Id, categoryEntity.Name);
     }
 
-    public DataAccess.Entities.Category MapModelToEntity(Models.Category categoryModel)
+    public void UpdateEntityWithDto(DataAccess.Entities.Category categoryEntity, DTOs.Category categoryDto)
     {
-        return new DataAccess.Entities.Category
-        {             
-            Name = categoryModel.Name 
-        };
+        categoryEntity.Name = categoryDto.Name;
     }
 }
