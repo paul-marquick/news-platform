@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace NewsPlatform.ConsoleApp1.Migrations
+namespace NewsPlatform.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

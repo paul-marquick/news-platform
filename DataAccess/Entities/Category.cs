@@ -1,4 +1,4 @@
-﻿namespace NewsPlatform.ConsoleApp1.Entities;
+﻿namespace NewsPlatform.DataAccess.Entities;
 
 public record Category
 {

@@ -1,6 +1,6 @@
-﻿namespace NewsPlatform.ConsoleApp1.Entities;
+﻿namespace NewsPlatform.DataAccess.Entities;
 
-public class Article
+public record Article
 {
     public Guid Id { get; set; }
     public required string Title { get; set; }

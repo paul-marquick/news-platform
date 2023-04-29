@@ -1,20 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NewsPlatform.ConsoleApp1.Entities;
+using NewsPlatform.DataAccess.Entities;
 
-namespace NewsPlatform.ConsoleApp1;
+namespace NewsPlatform.DataAccess;
 
-public class NewsPlatformContext : DbContext
+public class NewsPlatformDbContext : DbContext
 {
+    public NewsPlatformDbContext(DbContextOptions<NewsPlatformDbContext> options) : base(options) { }
+
     public DbSet<Article> Articles { get; set; }
     public DbSet<Category> Categories { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            optionsBuilder.UseSqlServer("Server=paul-wins-11; Database=NewsPlatform; Trusted_Connection=True; Encrypt=false;");
-        }
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

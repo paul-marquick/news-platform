@@ -3,20 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using NewsPlatform.ConsoleApp1;
+using NewsPlatform.DataAccess;
 
 #nullable disable
 
-namespace NewsPlatform.ConsoleApp1.Migrations
+namespace NewsPlatform.DataAccess.Migrations
 {
-    [DbContext(typeof(NewsPlatformContext))]
-    [Migration("20230427160616_InitialCreate")]
-    partial class InitialCreate
+    [DbContext(typeof(NewsPlatformDbContext))]
+    partial class NewsPlatformDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,7 +22,7 @@ namespace NewsPlatform.ConsoleApp1.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("NewsPlatform.ConsoleApp1.Entities.Article", b =>
+            modelBuilder.Entity("NewsPlatform.DataAccess.Entities.Article", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -49,7 +46,7 @@ namespace NewsPlatform.ConsoleApp1.Migrations
                     b.ToTable("Article", (string)null);
                 });
 
-            modelBuilder.Entity("NewsPlatform.ConsoleApp1.Entities.Category", b =>
+            modelBuilder.Entity("NewsPlatform.DataAccess.Entities.Category", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -64,9 +61,9 @@ namespace NewsPlatform.ConsoleApp1.Migrations
                     b.ToTable("Category", (string)null);
                 });
 
-            modelBuilder.Entity("NewsPlatform.ConsoleApp1.Entities.Article", b =>
+            modelBuilder.Entity("NewsPlatform.DataAccess.Entities.Article", b =>
                 {
-                    b.HasOne("NewsPlatform.ConsoleApp1.Entities.Category", "Category")
+                    b.HasOne("NewsPlatform.DataAccess.Entities.Category", "Category")
                         .WithMany("Articles")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -75,7 +72,7 @@ namespace NewsPlatform.ConsoleApp1.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("NewsPlatform.ConsoleApp1.Entities.Category", b =>
+            modelBuilder.Entity("NewsPlatform.DataAccess.Entities.Category", b =>
                 {
                     b.Navigation("Articles");
                 });

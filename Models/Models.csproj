@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	  <RootNamespace>NewsPlatform.Models</RootNamespace>
+	  <AssemblyName>NewsPlatform.Models</AssemblyName>
+  </PropertyGroup>
+
+</Project>
