@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NewsPlatform.DataAccess;
 using NewsPlatform.DataAccess.Entities;
 using NewsPlatform.WebService.Mappers;
@@ -13,11 +12,13 @@ public class CategoryController : ControllerBase
 {
     private readonly NewsPlatformDbContext dbContext;
     private readonly ICategoryMapper categoryMapper;
+    private readonly ILogger<CategoryController> logger;
 
-    public CategoryController(NewsPlatformDbContext dbContext, ICategoryMapper categoryMapper)
+    public CategoryController(NewsPlatformDbContext dbContext, ICategoryMapper categoryMapper, ILogger<CategoryController> logger)
     {
         this.dbContext = dbContext;
         this.categoryMapper = categoryMapper;
+        this.logger = logger;
     }
 
     [HttpGet]
@@ -44,6 +45,8 @@ public class CategoryController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<DTOs.Category>> PostAsync([FromBody] DTOs.Category category)
     {
+        logger.LogDebug($"PostAsync, category.Name: {category.Name}");
+
         Category categoryEntity = new Category
         {
             Name = category.Name
@@ -60,6 +63,8 @@ public class CategoryController : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult> PutAsync(Guid id, [FromBody] DTOs.Category category)
     {
+        logger.LogDebug($"PutAsync, id: {id}, category.Name: {category.Name}");
+
         var categoryEntity = await dbContext.Categories.SingleOrDefaultAsync(x => x.Id == id);
 
         if (categoryEntity == null)
@@ -80,6 +85,8 @@ public class CategoryController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteAsync(Guid id)
     {
+        logger.LogDebug($"DeleteAsync, id: {id}.");
+
         Category? category = await dbContext.Categories.SingleOrDefaultAsync(x => x.Id == id);
 
         if (category != null)

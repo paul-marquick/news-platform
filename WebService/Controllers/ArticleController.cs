@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using NewsPlatform.DataAccess;
 using NewsPlatform.DataAccess.Entities;
 using NewsPlatform.WebService.Mappers;
-using System.Security.Cryptography.X509Certificates;
 
 namespace NewsPlatform.WebService.Controllers;
 
@@ -13,11 +12,13 @@ public class ArticleController : ControllerBase
 {
     private readonly NewsPlatformDbContext dbContext;
     private readonly IArticleMapper articleMapper;
+    private readonly ILogger<ArticleController> logger;
 
-    public ArticleController(NewsPlatformDbContext dbContext, IArticleMapper articleMapper)
+    public ArticleController(NewsPlatformDbContext dbContext, IArticleMapper articleMapper, ILogger<ArticleController> logger)
     {
         this.dbContext = dbContext;
         this.articleMapper = articleMapper;
+        this.logger = logger;
     }
 
     [HttpGet]
@@ -44,6 +45,8 @@ public class ArticleController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<DTOs.Article>> PostAsync([FromBody] DTOs.Article article)
     {
+        logger.LogDebug($"PostAsync, article.Title: {article.Title}, article.Content: {article.Content}, article.CategoryId: {article.CategoryId}");
+
         Article articleEntity = new Article
         {
             Title = article.Title,
@@ -78,6 +81,8 @@ public class ArticleController : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult> PutAsync(Guid id, [FromBody] DTOs.Article article)
     {
+        logger.LogDebug($"PutAsync, id: {id}, article.Title: {article.Title}, article.Content: {article.Content}, article.CategoryId: {article.CategoryId}");
+
         var articleEntity = await dbContext.Articles.SingleOrDefaultAsync(x => x.Id == id);
 
         if (articleEntity == null)
@@ -114,6 +119,8 @@ public class ArticleController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteAsync(Guid id)
     {
+        logger.LogDebug($"DeleteAsync, id: {id}.");
+
         Article? article = await dbContext.Articles.SingleOrDefaultAsync(x => x.Id == id);
 
         if (article != null)
