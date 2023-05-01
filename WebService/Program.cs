@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NewsPlatform.DataAccess;
+using NewsPlatform.DataAccess.Seeding;
 using NewsPlatform.WebService.Mappers;
 using Serilog;
 
@@ -26,6 +27,7 @@ internal class Program
         builder.Services.AddSwaggerGen();
         builder.Services.AddSingleton<ICategoryMapper, CategoryMapper>();
         builder.Services.AddSingleton<IArticleMapper, ArticleMapper>();
+        builder.Services.AddScoped<IDatabaseSeeder, DatabaseSeeder>();
 
         WebApplication app = builder.Build();
 

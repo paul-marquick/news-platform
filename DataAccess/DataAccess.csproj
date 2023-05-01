@@ -5,7 +5,6 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<RootNamespace>NewsPlatform.DataAccess</RootNamespace>
-		<AssemblyName>NewsPlatform.DataAccess</AssemblyName>
 	</PropertyGroup>
 
 	<ItemGroup>
