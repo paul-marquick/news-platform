@@ -7,6 +7,7 @@
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<RootNamespace>NewsPlatform.WebService</RootNamespace>
 		<DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+		<UserSecretsId>98559206-d6e1-45fd-bcef-e3c82bfa4b82</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>

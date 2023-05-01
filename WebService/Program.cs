@@ -31,15 +31,10 @@ internal class Program
 
         WebApplication app = builder.Build();
 
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
-
-        app.UseAuthorization();
-
+        // Use Open API UI in any environment. 
+        app.UseSwagger();
+        app.UseSwaggerUI();     
+        
         app.MapControllers();
 
         app.Run();
