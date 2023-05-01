@@ -1,3 +1,5 @@
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using Microsoft.EntityFrameworkCore;
 using NewsPlatform.DataAccess;
 using NewsPlatform.DataAccess.Seeding;
@@ -21,7 +23,15 @@ internal class Program
                 .ReadFrom.Configuration(hostContext.Configuration);
         });
 
-        builder.Services.AddDbContextPool<NewsPlatformDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("NewsPlatform")));
+        //string connectionString = builder.Configuration.GetConnectionString("NewsPlatform")!;
+
+        var keyVaultEndpoint = new Uri(builder.Configuration["VaultKey"]!);
+        var secretClient = new SecretClient(keyVaultEndpoint, new DefaultAzureCredential());
+
+        KeyVaultSecret kvs = secretClient.GetSecret("NewsPlatformSecret1");
+
+        builder.Services.AddDbContextPool<NewsPlatformDbContext>(options => options.UseSqlServer(kvs.Value));
+
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
