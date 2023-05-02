@@ -23,14 +23,24 @@ internal class Program
                 .ReadFrom.Configuration(hostContext.Configuration);
         });
 
-        //string connectionString = builder.Configuration.GetConnectionString("NewsPlatform")!;
+        string? connectionString;
 
-        var keyVaultEndpoint = new Uri(builder.Configuration["VaultKey"]!);
-        var secretClient = new SecretClient(keyVaultEndpoint, new DefaultAzureCredential());
+        if (builder.Environment.IsDevelopment())
+        {
+            // Get connection string from appsettings file(s).
+            connectionString = builder.Configuration.GetConnectionString("NewsPlatform")!;
+        }
+        else
+        {
+            // In production get connection string from Azure key vault.
+            Uri keyVaultEndpoint = new Uri(builder.Configuration["NewsPlatformVaultKey"]!);
+            SecretClient secretClient = new SecretClient(keyVaultEndpoint, new DefaultAzureCredential());
 
-        KeyVaultSecret kvs = secretClient.GetSecret("NewsPlatformSecret1");
+            KeyVaultSecret kvs = secretClient.GetSecret("NewsPlatformConnectionString");
+            connectionString = kvs.Value;
+        }
 
-        builder.Services.AddDbContextPool<NewsPlatformDbContext>(options => options.UseSqlServer(kvs.Value));
+        builder.Services.AddDbContextPool<NewsPlatformDbContext>(options => options.UseSqlServer(connectionString));
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
@@ -41,7 +51,7 @@ internal class Program
 
         WebApplication app = builder.Build();
 
-        // Use Open API UI in any environment. 
+        // Use Open API UI in any environment, as this is just a demo. 
         app.UseSwagger();
         app.UseSwaggerUI();     
         
