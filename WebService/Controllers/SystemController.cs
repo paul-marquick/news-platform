@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NewsPlatform.DTOs;
 
 namespace NewsPlatform.WebService.Controllers;
 
@@ -7,20 +8,27 @@ namespace NewsPlatform.WebService.Controllers;
 public class SystemController : ControllerBase
 {
     private readonly ILogger<SystemController> logger;
-    private readonly IWebHostEnvironment webHostEnvironment;
 
-    public SystemController(IWebHostEnvironment webHostEnvironment, ILogger<SystemController> logger)
+    public SystemController(ILogger<SystemController> logger)
     {
         this.logger = logger;
-        this.webHostEnvironment = webHostEnvironment;
     }
 
     [HttpGet("environment")]
-    public ActionResult<string> GetEnvironment()
+    public ActionResult<EnvironmentData> GetEnvironmentData()
     {
-        logger.LogDebug($"Environment is {webHostEnvironment.EnvironmentName}");
+        string environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")!;
 
-        return Ok(webHostEnvironment.EnvironmentName);
+        logger.LogDebug($"EnvironmentData, name: {environmentName}");
+
+        var environmentData = new EnvironmentData
+        {
+            EnvironmentName = environmentName,
+            WebsiteInstanceId = Environment.GetEnvironmentVariable("WEBSITE_INSTANCE_ID"),
+            WebsiteSiteName = Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME")
+        };
+
+        return Ok(environmentData);
     }
 
     [HttpGet("echo")]

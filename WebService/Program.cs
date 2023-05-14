@@ -25,12 +25,7 @@ internal class Program
 
         string? connectionString;
 
-        if (builder.Environment.IsDevelopment())
-        {
-            // Get connection string from appsettings file(s).
-            connectionString = builder.Configuration.GetConnectionString("NewsPlatform")!;
-        }
-        else
+        if (IsAzure())
         {
             // In production get connection string from Azure key vault.
             Uri keyVaultEndpoint = new Uri(builder.Configuration["NewsPlatformVaultKey"]!);
@@ -38,6 +33,11 @@ internal class Program
 
             KeyVaultSecret kvs = secretClient.GetSecret("NewsPlatformConnectionString");
             connectionString = kvs.Value;
+        }
+        else
+        {
+            // Get connection string from appsettings file(s).
+            connectionString = builder.Configuration.GetConnectionString("NewsPlatform")!;
         }
 
         builder.Services.AddDbContextPool<NewsPlatformDbContext>(options => options.UseSqlServer(connectionString));
@@ -59,4 +59,14 @@ internal class Program
 
         app.Run();
     }
+
+    #region Private 
+
+    private static bool IsAzure()
+    {
+        return !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("WEBSITE_INSTANCE_ID")) &&
+            !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME"));
+    }
+
+    #endregion 
 }
