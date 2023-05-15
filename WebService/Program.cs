@@ -28,7 +28,7 @@ internal class Program
         if (IsAzure())
         {
             // In production get connection string from Azure key vault.
-            Uri keyVaultEndpoint = new Uri(builder.Configuration["NewsPlatformVaultKey"]!);
+            Uri keyVaultEndpoint = new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/");
             SecretClient secretClient = new SecretClient(keyVaultEndpoint, new DefaultAzureCredential());
 
             KeyVaultSecret kvs = secretClient.GetSecret("NewsPlatformConnectionString");
@@ -36,7 +36,6 @@ internal class Program
         }
         else
         {
-            // Get connection string from appsettings file(s).
             connectionString = builder.Configuration.GetConnectionString("NewsPlatform")!;
         }
 
