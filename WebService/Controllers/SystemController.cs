@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using NewsPlatform.DTOs;
 
 namespace NewsPlatform.WebService.Controllers;
@@ -8,10 +9,12 @@ namespace NewsPlatform.WebService.Controllers;
 public class SystemController : ControllerBase
 {
     private readonly ILogger<SystemController> logger;
+    private readonly Config config;
 
-    public SystemController(ILogger<SystemController> logger)
+    public SystemController(ILogger<SystemController> logger, IOptionsMonitor<Config> optionsMonitorConfig)
     {
         this.logger = logger;
+        config = optionsMonitorConfig.CurrentValue;
     }
 
     [HttpGet("environment")]
@@ -37,5 +40,13 @@ public class SystemController : ControllerBase
         logger.LogDebug($"Echo text: {text}");
 
         return Ok(text);
+    }
+
+    [HttpGet("config")]
+    public ActionResult<Config> GetConfig()
+    {
+        logger.LogDebug($"Config, Name: {config.Name},  FromEmailAddress: {config.FromEmailAddress},  WebServiceEnabled: {config.WebServiceEnabled}");
+
+        return Ok(config);
     }
 }

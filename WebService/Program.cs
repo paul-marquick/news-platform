@@ -1,5 +1,6 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using Microsoft.Azure.KeyVault.Models;
 using Microsoft.EntityFrameworkCore;
 using NewsPlatform.DataAccess;
 using NewsPlatform.DataAccess.Seeding;
@@ -27,20 +28,26 @@ internal class Program
 
         if (IsAzure())
         {
-            // In production get connection string from Azure key vault.
-            Uri keyVaultEndpoint = new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/");
-            SecretClient secretClient = new SecretClient(keyVaultEndpoint, new DefaultAzureCredential());
+            connectionString = GetAzureKeyVaultValue(builder, "NewsPlatformConnectionString");
 
-            KeyVaultSecret kvs = secretClient.GetSecret("NewsPlatformConnectionString");
-            connectionString = kvs.Value;
+            builder.Services.Configure<Config>(options =>
+            {
+                options.WebServiceEnabled = bool.Parse(GetAzureKeyVaultValue(builder, "Config--WebServiceEnabled"));
+                options.Name = GetAzureKeyVaultValue(builder, "Config--Name");
+                options.FromEmailAddress = GetAzureKeyVaultValue(builder, "Config--FromEmailAddress");
+            });
         }
         else
         {
             connectionString = builder.Configuration.GetConnectionString("NewsPlatform")!;
+            
+            IConfigurationSection configConfigurationSection = builder.Configuration.GetSection(nameof(Config));
+            builder.Services.Configure<Config>(configConfigurationSection);
         }
 
         builder.Services.AddDbContextPool<NewsPlatformDbContext>(options => options.UseSqlServer(connectionString));
 
+        builder.Services.AddOptions();
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
@@ -65,6 +72,15 @@ internal class Program
     {
         return !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("WEBSITE_INSTANCE_ID")) &&
             !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME"));
+    }
+
+    private static string GetAzureKeyVaultValue(WebApplicationBuilder builder, string secretName)
+    {
+        Uri keyVaultEndpoint = new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/");
+        SecretClient secretClient = new SecretClient(keyVaultEndpoint, new DefaultAzureCredential());
+
+        KeyVaultSecret kvs = secretClient.GetSecret(secretName);
+        return kvs.Value;
     }
 
     #endregion 
